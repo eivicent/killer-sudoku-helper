@@ -7,6 +7,23 @@
 #    http://shiny.rstudio.com/
 #
 
+
+ups <- expand.grid(c(3:45), c(2:9))
+out <- list()
+for(ii in 1:nrow(ups)){
+    out[[ii]] <- combi(ups[ii,1], ups[ii,2])
+}
+out
+
+
+
+combi <- function(value, cells){
+    x    <- combn(c(1:9), cells)
+    x2 <- colSums(x)
+    possible_combinations <- t(x[,which(x2 == value)])
+    return(possible_combinations)
+}
+
 library(shiny)
 
 # Define UI for application that draws a histogram
@@ -37,11 +54,7 @@ ui <- fluidPage(
 server <- function(input, output) {
 
     output$combinations <- renderTable({
-        x    <- combn(c(1:9),input$partitions)
-        x2 <- colSums(x)
-        possible_combinations <- t(x[,which(x2 == input$totalsum)])
-        # draw the histogram with the specified number of bins
-        possible_combinations
+        combi(input$totalsum, input$partitions)
     })
 }
 
