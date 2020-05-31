@@ -8,13 +8,19 @@ ui <- fluidPage(
         tabPanel("Unique combinations"),
         tabPanel("1 Group helper",
             fluidRow(
-                    box(width = 4 ,
-                        numericInput(inputId = "totValue",
-                                     label = NULL, value = 1)), 
-                    box(width = 4, 
-                        numericInput(inputId = "cells",
-                                     label = NULL, value = 1)),
-                    box(width = 4,
+                    box(width = 6,
+                        numericInput(inputId = "totValue", width = "50%",
+                                     label = "Value of the Sum", value = 1)), 
+                    box(width = 6, 
+                        numericInput(inputId = "cells", width = "50%",
+                                     label = "number of cells", value = 1))),
+            fluidRow(
+                    box(width = 2,
+                        selectInput(inputId = "except",
+                                     label = "Exclude combinations with:",
+                                     choices = c(1:9), selected = NA,
+                                    multiple = TRUE)),
+                    box(width = 10,
                         reactableOutput("combinations"))
                 )
             ),
@@ -34,7 +40,25 @@ server <- function(input, output) {
 
     output$combinations <- renderReactable({
         aux <- combi(input$totValue, input$cells)
-        reactable(aux)}
+        reactable(aux,
+                  rowStyle = function(index){
+                      if(!any(aux[index,] %in% input$except)){
+                          list(background = "#2FAD28"
+                                   # "rgba(0, 10, 0, 0)"
+                               )
+                      } else {
+                          list(background = "#C90C0C")
+                      }
+                  },
+                  defaultColDef = 
+                      colDef(name = NULL,
+                             align = "center"),
+                  borderless = TRUE,
+                  outlined = TRUE,
+                  compact = TRUE,
+                  fullWidth = FALSE,
+                  showPagination = FALSE,
+                  filterable = F)}
         )
     
 }

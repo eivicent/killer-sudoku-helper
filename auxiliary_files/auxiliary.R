@@ -27,16 +27,10 @@ combinations_summary <- amount_of_combinations %>%
   left_join(possible_combinations, by = "key")
 
  
- # reactable(combinations_summary[,c("totValue","cells")],
- #           columns = list(
- #             totValue = colDef(name = "Sum Value"),
- #             cells = colDef(name = "Cells",
- #                            filterable = F)),
- #           bordered =TRUE,
- #           filterable = TRUE,
- #           minRows = 10,
- #           groupBy = "totValue")
-
-
-
-
+  reactable(combi(15,3),
+            defaultColDef = 
+              colDef(name = NULL,
+                     align = "center"),
+            bordered = TRUE,
+            filterable = F)
+  
