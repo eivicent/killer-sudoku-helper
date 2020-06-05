@@ -5,7 +5,22 @@ ui <- fluidPage(
     titlePanel("Killer sudoku Helper"),
     navlistPanel(
         tabPanel("What is killer Sudoku"),
-        tabPanel("Unique combinations"),
+        tabPanel("Unique combinations",
+                 fluidRow(
+                     bscols(widths = c(3,9),
+                     box(
+                         
+                         filter_checkbox(id ="ncombinations",
+                                       label = "number of combinations",
+                                       sharedData = data,
+                                       ~combinations)
+                         # selectInput(inputId = "ncombinations",
+                         #             label = "Number of combinations",
+                         #             choices = c(1,2,3),
+                         #             selected = 1, multiple = F)
+                         ),
+                     box(reactableOutput("ucombinations"))
+                 ))),
         tabPanel("1 Group helper",
             fluidRow(
                     box(width = 6,
@@ -31,6 +46,23 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
     
+    output$ucombinations <- renderReactable({
+        aux <- data
+        # %>% filter(combinations == input$ncombinations) %>%
+            # select(totValue, '1':'9')
+        reactable(aux,
+                  defaultColDef = 
+                      colDef(name = NULL,
+                             align = "center"),
+                  borderless = TRUE,
+                  outlined = TRUE,
+                  compact = TRUE,
+                  fullWidth = FALSE,
+                  showPagination = FALSE,
+                  filterable = F,
+                  groupBy = "totValue")
+        })
+    
     output$combinations_summary <- renderReactable({
        reactable(combinations_summary %>%
             select("Number of Cells" = cells,
@@ -39,7 +71,7 @@ server <- function(input, output) {
         })
 
     output$combinations <- renderReactable({
-        aux <- combi(input$totValue, input$cells)
+        aux <- valid_combinations[paste0(input$totValue, input$cells)][[1]]
         reactable(aux,
                   rowStyle = function(index){
                       if(!any(aux[index,] %in% input$except)){
