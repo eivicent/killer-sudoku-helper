@@ -71,7 +71,7 @@ server <- function(input, output) {
         })
 
     output$combinations <- renderReactable({
-        aux <- valid_combinations[paste0(input$totValue, input$cells)][[1]]
+        aux <- combinations[paste(input$totValue, input$cells, sep = "_")][[1]]
         reactable(aux,
                   rowStyle = function(index){
                       if(!any(aux[index,] %in% input$except)){
